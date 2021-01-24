@@ -4,7 +4,7 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.streaming.Trigger
 
 object TransformLinesStreamingJob {
-
+//Yapılan işlem gelen datayı farklı bir formata dönüştürmek. O yüzden stateless stream processing
   def main(args: Array[String]): Unit = {
     val spark = SparkSession.builder()
       .master("local")
@@ -12,6 +12,8 @@ object TransformLinesStreamingJob {
       .getOrCreate()
 
     import spark.implicits._
+    
+    //spark.readStream.format("soket").load("/path")
 
     val inputLines = spark.readStream
       .format("socket")
@@ -25,8 +27,9 @@ object TransformLinesStreamingJob {
 
     val query = transformedLines.writeStream
       .outputMode("update")
-      .format("console")
-      .trigger(Trigger.ProcessingTime(5000))
+      .format("console")//Test için console yapıyoruz.
+      .trigger(Trigger.ProcessingTime(5000))//Ne zamanda bir tetiklenecek. Her 5 saniyede bir soket'i kontrol et. 
+                                            //Bu micro-batch olarak yapılıyor.(ProcessingTime yerine Continuous yaz) 
       .start()
 
     query.awaitTermination()
