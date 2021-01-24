@@ -43,7 +43,12 @@ object ReviewMachineLearningJob {
         StructField("label", IntegerType)
       )
     )
-
+    /**
+    *pipeline: review => word => tf => classification
+    */
+    
+    
+    //json okurken schema vermeye dikkat ediyoruz.
     val trainingData = spark.read
       .schema(schema)
       .json(trainingDataPath)
